@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 DSAT Math - New Practice Exam | Mr. Mohammed Hesham</title>
+<meta name="description" content="امتحان SAT Math تفاعلي جديد - 22 سؤال في وحدتين">
+<meta name="author" content="Mr. Mohammed Hesham">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Cairo', sans-serif; }
+body.en-mode { font-family: 'Inter', sans-serif; }
+.correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+.timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.7; } }
+@media print { .no-print { display: none !important; } }
+.success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+.grade-excellent { background: #dcfce7; color: #166534; }
+.grade-good { background: #fef3c7; color: #92400e; }
+.grade-pass { background: #dbeafe; color: #1e40af; }
+.grade-fail { background: #fee2e2; color: #991b1b; }
+.lang-switch {
+position: fixed; top: 16px; left: 16px; z-index: 100;
+background: white; padding: 6px; border-radius: 30px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
+border: 2px solid #1e3a8a;
+}
+[dir="ltr"] .lang-switch { left: auto; right: 16px; }
+.lang-btn {
+padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+transition: all 0.3s; border: none; font-size: 0.875rem;
+background: transparent; color: #6b7280;
+}
+.lang-btn.active { background: #1e3a8a; color: white; box-shadow: 0 2px 6px rgba(30,58,138,0.4); }
+.lang-btn:hover:not(.active) { background: #eff6ff; color: #1e3a8a; }
+.shuffle-badge {
+display: inline-block;
+background: linear-gradient(135deg, #1e3a8a, #dc2626);
+color: white; padding: 4px 12px; border-radius: 20px;
+font-size: 0.75rem; font-weight: bold; margin-right: 8px;
+}
+.math-display {
+display: inline-block; direction: ltr;
+font-family: 'Times New Roman', 'Cambria Math', serif;
+font-size: 1.15em; font-style: italic;
+padding: 2px 8px; background: #eff6ff;
+border-radius: 6px; margin: 2px;
+color: #1e3a8a; font-weight: 600; letter-spacing: 0.5px;
+}
+.save-indicator {
+position: fixed; bottom: 20px; left: 20px; z-index: 200;
+background: #10b981; color: white; padding: 8px 16px;
+border-radius: 20px; font-size: 0.8rem; font-weight: bold;
+opacity: 0; transition: opacity 0.3s; pointer-events: none;
+box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+}
+.save-indicator.show { opacity: 1; }
+.formula-box {
+background: #eff6ff; border: 2px solid #3b82f6;
+border-radius: 8px; padding: 12px; margin: 10px 0;
+font-family: 'Times New Roman', serif;
+direction: ltr; text-align: center;
+}
+.svg-graph {
+display: block;
+margin: 12px auto;
+background: white;
+border: 2px solid #e5e7eb;
+border-radius: 12px;
+padding: 8px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.graph-container { text-align: center; margin: 10px 0; }
+.module-badge {
+display: inline-block;
+padding: 4px 16px;
+border-radius: 20px;
+font-weight: bold;
+font-size: 0.85rem;
+margin-bottom: 8px;
+}
+.module-1 { background: #dbeafe; color: #1e40af; }
+.module-2 { background: #fef3c7; color: #92400e; }
+</style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-red-50 text-gray-800 p-4 md:p-8 min-h-screen">
+
+<div class="lang-switch no-print">
+<button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+<button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+</div>
+
+<div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+<div id="timer-container" class="max-w-5xl mx-auto mb-4 text-center no-print">
+<div class="bg-white p-4 rounded-2xl shadow-md inline-block border-2 border-blue-100">
+<span class="text-gray-600 ml-2" data-ar="⏰ الوقت المتبقي:" data-en="⏰ Time Remaining:">⏰ الوقت المتبقي:</span>
+<span id="timer" class="text-2xl font-bold text-blue-700 font-mono">70:00</span>
+<span class="shuffle-badge" data-ar="🎲 DSAT Math - 22 Question" data-en="🎲 DSAT Math - 22 Questions">🎲 DSAT Math - 22 Question</span>
+</div>
+</div>
+
+<div class="max-w-5xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+<button onclick="toggleAnswers()" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar=" إظهار / إخفاء الإجابات" data-en="👀 Show / Hide Answers">👀 إظهار / إخفاء الإجابات</button>
+<button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة" data-en="🖨️ Print">️ طباعة</button>
+<button onclick="reshuffleExam()" class="bg-gradient-to-r from-blue-700 to-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🔄 أسئلة جديدة" data-en="🔄 New Questions">🔄 أسئلة جديدة</button>
+<button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="️ مسح التقدم" data-en="🗑️ Clear Progress">🗑️ مسح التقدم</button>
+</div>
+
+<header class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-8 border-4 border-blue-700">
+<div class="text-center">
+<div class="inline-block bg-red-600 text-white px-4 py-1 rounded-full text-xs font-bold mb-2">DIGITAL SAT - MATH</div>
+<h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar=" DSAT Math - New Practice Exam" data-en="🎯 DSAT Math - New Practice Exam"> DSAT Math - New Practice Exam</h1>
+<h2 class="text-lg text-blue-700 font-semibold" data-ar="22 سؤال في وحدتين - الجبر، الهندسة، الإحصاء، الدوال" data-en="22 Questions in 2 Modules - Algebra, Geometry, Statistics, Functions">22 سؤال في وحدتين - الجبر، الهندسة، الإحصاء، الدوال</h2>
+<p class="text-sm text-gray-600 mt-2" data-ar="نماذج خطية وأسية، معادلات تربيعية، متباينات، احتمالات، وتحليل البيانات" data-en="Linear & exponential models, quadratic equations, inequalities, probability, and data analysis">نماذج خطية وأسية، معادلات تربيعية، متباينات، احتمالات، وتحليل البيانات</p>
+<p class="text-xs text-green-600 mt-2 font-semibold" data-ar=" يتم حفظ تقدمك تلقائياً" data-en="💾 Progress saved automatically">💾 يتم حفظ تقدمك تلقائياً</p>
+</div>
+<div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+<span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-blue-300 bg-transparent w-28 text-center"></span>
+<span><span data-ar="😊 الاسم:" data-en="😊 Name:">😊 الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-blue-300 bg-transparent w-32 text-center" placeholder="اكتب اسمك"></span>
+<span><span data-ar="🏫 الشعبة:" data-en="🏫 Class:">🏫 الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-blue-300 bg-transparent w-28 text-center" placeholder="الشعبة"></span>
+<span data-ar="⏰ المدة: 70 دقيقة" data-en="⏰ Duration: 70 min">⏰ المدة: 70 دقيقة</span>
+<span data-ar="📊 المجموع: 22 سؤال" data-en="📊 Total: 22 Questions">📊 المجموع: 22 سؤال</span>
+</div>
+</header>
+
+<div class="max-w-5xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-md border-2 border-blue-200 no-print">
+<h3 class="font-bold text-lg mb-3 text-blue-800 text-center" data-ar="📐 الصيغ الأساسية" data-en=" Key Formulae">📐 الصيغ الأساسية</h3>
+<div class="grid md:grid-cols-3 gap-3 text-sm">
+<div class="formula-box"><strong>Linear:</strong> y = mx + b</div>
+<div class="formula-box"><strong>Exponential:</strong> y = a(b)ˣ</div>
+<div class="formula-box"><strong>Quadratic:</strong> ax² + bx + c = 0</div>
+<div class="formula-box"><strong>Quadratic Formula:</strong> x = [-b ± √(b²-4ac)] / 2a</div>
+<div class="formula-box"><strong>Slope:</strong> m = (y₂-y₁)/(x₂-x₁)</div>
+<div class="formula-box"><strong>Median:</strong> Middle value of ordered data</div>
+</div>
+</div>
+
+<main class="max-w-5xl mx-auto space-y-8" id="exam-content"></main>
+
+<div class="text-center no-print pb-8 mt-8">
+<button onclick="gradeExam()" class="bg-gradient-to-r from-blue-700 to-red-600 hover:from-blue-800 hover:to-red-700 text-white text-lg px-10 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="🎯 صحح إجاباتي!" data-en="🎯 Grade My Answers!">🎯 صحح إجاباتي!</button>
+</div>
+
+<div id="results-panel" class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-4 border-blue-700 hidden no-print">
+<h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="🏆 نتيجتك يا بطل! 🏆" data-en="🏆 Your Results, Champion! 🏆">🏆 نتيجتك يا بطل! </h2>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="😊 الاسم" data-en="😊 Name">😊 الاسم</p><p id="res-name" class="font-bold text-xl text-blue-700">-</p></div>
+<div class="bg-red-50 p-4 rounded-xl text-center"><p data-ar="📅 التاريخ" data-en="📅 Date">📅 التاريخ</p><p id="res-date" class="font-bold text-xl text-red-700">-</p></div>
+<div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="🌟 المجموع" data-en="🌟 Score">🌟 المجموع</p><p id="res-total" class="font-bold text-3xl text-blue-700">0 / 100</p></div>
+</div>
+<div class="text-center mb-6">
+<span id="success-badge" class="success-badge grade-excellent">-</span>
+<p id="success-percent" class="text-4xl font-bold text-blue-700 mt-2">0%</p>
+<p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-xl mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800" data-ar="📊 أدائك في كل وحدة:" data-en="📊 Your Performance by Module:"> أدائك في كل وحدة:</h3>
+<div class="space-y-3" id="sections-performance"></div>
+</div>
+<div class="text-center mb-6">
+<button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-blue-700 to-red-600 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition cursor-pointer" data-ar="📧 أرسل النتيجة للمعلم" data-en="📧 Send Results to Teacher">📧 أرسل النتيجة للمعلم</button>
+<p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+</div>
+<div class="flex gap-3 justify-center">
+<button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold" data-ar="🖨️ طباعة النتيجة" data-en="🖨️ Print Results">️ طباعة النتيجة</button>
+</div>
+</div>
+
+<footer class="max-w-5xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+© <span data-ar="DSAT Math New Practice" data-en="DSAT Math New Practice">DSAT Math New Practice</span> | Mr. Mohammed Hesham 🎯
+</footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'dsat_math_new_practice_exam_v1';
+const TOTAL_TIME = 4200;
+const TOTAL_QUESTIONS = 22;
+
+let currentSeed = null;
+let answersVisible = false;
+let saveIndicatorTimeout = null;
+
+function mulberry32(a) {
+    return function() {
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+let rng = null;
+
+function showSaveIndicator() {
+    const indicator = document.getElementById('saveIndicator');
+    indicator.classList.add('show');
+    if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
+    saveIndicatorTimeout = setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+function saveState(showIndicator = true) {
+    try {
+        const state = {
+            seed: currentSeed, lang: currentLang,
+            studentName: document.getElementById('studentName').value,
+            studentClass: document.getElementById('studentClass').value,
+            examDate: document.getElementById('examDate').value,
+            answers: getSelectedAnswers(),
+            timeRemaining: timeRemaining,
+            answersVisible: answersVisible, savedAt: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (showIndicator) showSaveIndicator();
+    } catch (e) { console.error('Save error:', e); }
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : null;
+    } catch (e) { return null; }
+}
+
+function getSelectedAnswers() {
+    const answers = {};
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected) answers[i] = selected.value;
+    }
+    return answers;
+}
+
+function restoreAnswers(answers) {
+    if (!answers) return;
+    for (const [idx, val] of Object.entries(answers)) {
+        const radio = document.querySelector(`input[name="q${idx}"][value="${val}"]`);
+        if (radio) radio.checked = true;
+    }
+}
+
+function clearProgress() {
+    const msg = currentLang === 'ar' ? '⚠️ هل أنت متأكد من مسح كل التقدم؟' : '⚠️ Clear all progress?';
+    if (confirm(msg)) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+}
+
+function setupAnswerListeners() {
+    document.getElementById('exam-content').addEventListener('change', (e) => {
+        if (e.target.type === 'radio') saveState();
+    });
+}
+
+function setupInputListeners() {
+    ['studentName', 'studentClass', 'examDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => saveState(false));
+            el.addEventListener('blur', () => saveState());
+        }
+    });
+}
+
+// ==================== SVG Diagrams ====================
+const svgGraphs = {
+    scatterplot: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#eff6ff" stroke="#1e3a8a" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="bold">📊 Scatterplot - Model Selection</text>
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2"/>
+        <line x1="50" y1="240" x2="50" y2="40" stroke="#374151" stroke-width="2"/>
+        <text x="375" y="235" font-size="11" fill="#374151">x</text>
+        <text x="20" y="140" text-anchor="middle" font-size="11" fill="#374151">y</text>
+        <!-- نقاط تتبع منحنى أسي -->
+        <circle cx="80" cy="220" r="5" fill="#dc2626"/>
+        <circle cx="120" cy="200" r="5" fill="#dc2626"/>
+        <circle cx="160" cy="170" r="5" fill="#dc2626"/>
+        <circle cx="200" cy="130" r="5" fill="#dc2626"/>
+        <circle cx="240" cy="80" r="5" fill="#dc2626"/>
+        <circle cx="280" cy="50" r="5" fill="#dc2626"/>
+        <circle cx="320" cy="35" r="5" fill="#dc2626"/>
+        <!-- خط أفضل مطابقة أسي -->
+        <path d="M 80 220 Q 160 180 240 80 T 320 35" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="200" y="265" text-anchor="middle" font-size="11" fill="#1e40af">نموذج أسي (Exponential)</text>
+    </svg>`,
+    
+    linear_graph: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#92400e" font-weight="bold">📈 f(x) = x + b</text>
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2"/>
+        <line x1="200" y1="40" x2="200" y2="240" stroke="#374151" stroke-width="2"/>
+        <text x="375" y="235" font-size="11" fill="#374151">x</text>
+        <text x="205" y="35" font-size="11" fill="#374151">y</text>
+        <line x1="80" y1="210" x2="320" y2="90" stroke="#f59e0b" stroke-width="3"/>
+        <circle cx="200" cy="150" r="6" fill="#dc2626"/>
+        <text x="215" y="145" font-size="12" fill="#dc2626" font-weight="bold">(0, 30)</text>
+        <text x="200" y="265" text-anchor="middle" font-size="11" fill="#92400e">المقطع الصادي b = 30</text>
+    </svg>`,
+    
+    exponential_growth: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#9f1239" font-weight="bold">📈 P(t) = 1800(1.02)ᵗ</text>
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2"/>
+        <line x1="50" y1="240" x2="50" y2="40" stroke="#374151" stroke-width="2"/>
+        <text x="375" y="235" font-size="11" fill="#374151">t (years)</text>
+        <text x="20" y="140" text-anchor="middle" font-size="11" fill="#374151">P(t)</text>
+        <path d="M 50 200 Q 150 180 250 100 Q 320 60 360 50" fill="none" stroke="#ec4899" stroke-width="3"/>
+        <circle cx="50" cy="200" r="5" fill="#dc2626"/>
+        <text x="60" y="195" font-size="11" fill="#dc2626" font-weight="bold">(0, 1800)</text>
+        <text x="200" y="265" text-anchor="middle" font-size="11" fill="#9f1239">P(0) = 1800 = القيمة الابتدائية</text>
+    </svg>`,
+    
+    inventory_graph: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#065f46" font-weight="bold"> المخزون مقابل الأيام</text>
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2"/>
+        <line x1="50" y1="240" x2="50" y2="40" stroke="#374151" stroke-width="2"/>
+        <text x="375" y="235" font-size="11" fill="#374151">days</text>
+        <text x="20" y="140" text-anchor="middle" font-size="11" fill="#374151">cups</text>
+        <text x="45" y="200" text-anchor="end" font-size="9" fill="#374151">4500</text>
+        <text x="45" y="240" text-anchor="end" font-size="9" fill="#374151">0</text>
+        <line x1="50" y1="60" x2="350" y2="240" stroke="#10b981" stroke-width="3"/>
+        <circle cx="50" cy="60" r="5" fill="#dc2626"/>
+        <text x="60" y="55" font-size="10" fill="#dc2626">(0, 4500)</text>
+        <circle cx="283" cy="165" r="5" fill="#2563eb"/>
+        <text x="290" y="160" font-size="10" fill="#2563eb">(40, 1700)</text>
+        <text x="200" y="265" text-anchor="middle" font-size="11" fill="#065f46">4500 - 70d = 1700 → d = 40</text>
+    </svg>`,
+    
+    inequality_graph: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#5b21b6" font-weight="bold">y > 4x + 8</text>
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2"/>
+        <line x1="50" y1="240" x2="50" y2="40" stroke="#374151" stroke-width="2"/>
+        <line x1="80" y1="200" x2="320" y2="80" stroke="#7c3aed" stroke-width="3" stroke-dasharray="5,3"/>
+        <text x="200" y="75" text-anchor="middle" font-size="12" fill="#7c3aed" font-weight="bold">y = 4x + 8</text>
+        <!-- المنطقة المظللة فوق الخط -->
+        <path d="M 80 200 L 320 80 L 320 40 L 80 40 Z" fill="#7c3aed" opacity="0.2"/>
+        <circle cx="100" cy="170" r="4" fill="#dc2626"/>
+        <text x="110" y="165" font-size="10" fill="#dc2626">(2, 19) ✓</text>
+        <circle cx="160" cy="110" r="4" fill="#dc2626"/>
+        <text x="170" y="105" font-size="10" fill="#dc2626">(4, 30) ✓</text>
+        <circle cx="220" cy="50" r="4" fill="#dc2626"/>
+        <text x="230" y="45" font-size="10" fill="#dc2626">(6, 41) ✓</text>
+        <text x="200" y="265" text-anchor="middle" font-size="11" fill="#5b21b6">المنطقة فوق الخط = الحل</text>
+    </svg>`,
+    
+    quadratic_graph: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#92400e" font-weight="bold">y = x² + bx + c</text>
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2"/>
+        <line x1="200" y1="40" x2="200" y2="240" stroke="#374151" stroke-width="2"/>
+        <path d="M 80 200 Q 140 80 200 60 Q 260 80 320 200" fill="none" stroke="#f59e0b" stroke-width="3"/>
+        <circle cx="140" cy="200" r="5" fill="#dc2626"/>
+        <text x="140" y="220" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">x = -2</text>
+        <circle cx="260" cy="200" r="5" fill="#dc2626"/>
+        <text x="260" y="220" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">x = 4</text>
+        <text x="200" y="265" text-anchor="middle" font-size="11" fill="#92400e">y = (x+2)(x-4) = x² - 2x - 8</text>
+    </svg>`,
+    
+    restaurant_table: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="bold"> توزيع الموظفين في 17 مطعم</text>
+        <table x="20" y="40" width="360">
+            <rect x="20" y="40" width="360" height="30" fill="#bfdbfe"/>
+            <text x="100" y="60" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">الفئة</text>
+            <text x="200" y="60" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">عدد المطاعم</text>
+            <text x="300" y="60" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">التراكمي</text>
+            <rect x="20" y="70" width="360" height="25" fill="white"/>
+            <text x="100" y="87" text-anchor="middle" font-size="10" fill="#374151">2-7</text>
+            <text x="200" y="87" text-anchor="middle" font-size="10" fill="#374151">2</text>
+            <text x="300" y="87" text-anchor="middle" font-size="10" fill="#374151">2</text>
+            <rect x="20" y="95" width="360" height="25" fill="#eff6ff"/>
+            <text x="100" y="112" text-anchor="middle" font-size="10" fill="#374151">8-13</text>
+            <text x="200" y="112" text-anchor="middle" font-size="10" fill="#374151">4</text>
+            <text x="300" y="112" text-anchor="middle" font-size="10" fill="#374151">6</text>
+            <rect x="20" y="120" width="360" height="25" fill="white"/>
+            <text x="100" y="137" text-anchor="middle" font-size="10" fill="#374151">14-19</text>
+            <text x="200" y="137" text-anchor="middle" font-size="10" fill="#374151">2</text>
+            <text x="300" y="137" text-anchor="middle" font-size="10" fill="#374151">8</text>
+            <rect x="20" y="145" width="360" height="25" fill="#fef3c7"/>
+            <text x="100" y="162" text-anchor="middle" font-size="10" fill="#92400e" font-weight="bold">20-25</text>
+            <text x="200" y="162" text-anchor="middle" font-size="10" fill="#92400e" font-weight="bold">7</text>
+            <text x="300" y="162" text-anchor="middle" font-size="10" fill="#92400e" font-weight="bold">15</text>
+            <rect x="20" y="170" width="360" height="25" fill="white"/>
+            <text x="100" y="187" text-anchor="middle" font-size="10" fill="#374151">26-31</text>
+            <text x="200" y="187" text-anchor="middle" font-size="10" fill="#374151">2</text>
+            <text x="300" y="187" text-anchor="middle" font-size="10" fill="#374151">17</text>
+        </table>
+        <text x="200" y="220" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">الوسيط = القيمة رقم 9 → في فئة 20-25</text>
+        <text x="200" y="245" text-anchor="middle" font-size="11" fill="#1e40af">21 هي القيمة الوحيدة في النطاق</text>
+    </svg>`
+};
+
+// ==================== EXAM DATA - 22 QUESTIONS ====================
+const originalExamData = {
+    modules: [
+        {
+            id: 'module1',
+            title: { ar: '📘 Module 1 - 12 سؤال', en: '📘 Module 1 - 12 Questions' },
+            questions: [
+                {
+                    q: { ar: 'أي نموذج هو الأنسب للبيانات في مخطط الانتشار (Scatterplot) الذي يتسارع فيه النمو؟', en: 'Which model best fits the data in a scatterplot showing accelerating growth?' },
+                    svg: svgGraphs.scatterplot,
+                    options: [
+                        { ar: 'نموذج خطي (Linear)', en: 'Linear model' },
+                        { ar: 'نموذج أسي (Exponential)', en: 'Exponential model' },
+                        { ar: 'نموذج ثابت (Constant)', en: 'Constant model' },
+                        { ar: 'نموذج دوري (Periodic)', en: 'Periodic model' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'النقاط التي تتبع منحنى يتسارع تمثل نموذجاً أسياً', en: 'Points following an accelerating curve represent an exponential model' }
+                },
+                {
+                    q: { ar: 'حل المعادلة: <span class="math-display">3k - 53 = 61</span>', en: 'Solve: <span class="math-display">3k - 53 = 61</span>' },
+                    options: [
+                        { ar: '<span class="math-display">k = 38</span>', en: '<span class="math-display">k = 38</span>' },
+                        { ar: '<span class="math-display">k = 36</span>', en: '<span class="math-display">k = 36</span>' },
+                        { ar: '<span class="math-display">k = 40</span>', en: '<span class="math-display">k = 40</span>' },
+                        { ar: '<span class="math-display">k = 34</span>', en: '<span class="math-display">k = 34</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '3k = 61 + 53 = 114 → k = 38', en: '3k = 61 + 53 = 114 → k = 38' }
+                },
+                {
+                    q: { ar: 'السرعة s تتراوح بين 150 و 170 ميلاً في الساعة. ما المتباينة الصحيحة؟', en: 'Speed s ranges between 150 and 170 mph. What is the correct inequality?' },
+                    options: [
+                        { ar: '<span class="math-display">150 ≤ s ≤ 170</span>', en: '<span class="math-display">150 ≤ s ≤ 170</span>' },
+                        { ar: '<span class="math-display">150 < s < 170</span>', en: '<span class="math-display">150 < s < 170</span>' },
+                        { ar: '<span class="math-display">s ≤ 150 أو s ≥ 170</span>', en: '<span class="math-display">s ≤ 150 or s ≥ 170</span>' },
+                        { ar: '<span class="math-display">s ≥ 150</span>', en: '<span class="math-display">s ≥ 150</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'السرعة بين 150 و 170 شاملاً الطرفين: 150 ≤ s ≤ 170', en: 'Speed between 150 and 170 inclusive: 150 ≤ s ≤ 170' }
+                },
+                {
+                    q: { ar: 'إذا كانت <span class="math-display">f(x) = 2x + 8</span> و <span class="math-display">f(x) = 58</span>، فما قيمة x؟', en: 'If <span class="math-display">f(x) = 2x + 8</span> and <span class="math-display">f(x) = 58</span>, what is x?' },
+                    options: [
+                        { ar: '<span class="math-display">x = 25</span>', en: '<span class="math-display">x = 25</span>' },
+                        { ar: '<span class="math-display">x = 20</span>', en: '<span class="math-display">x = 20</span>' },
+                        { ar: '<span class="math-display">x = 30</span>', en: '<span class="math-display">x = 30</span>' },
+                        { ar: '<span class="math-display">x = 33</span>', en: '<span class="math-display">x = 33</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2x + 8 = 58 → 2x = 50 → x = 25', en: '2x + 8 = 58 → 2x = 50 → x = 25' }
+                },
+                {
+                    q: { ar: 'الدالة الخطية <span class="math-display">f(x) = x + b</span> تحقق <span class="math-display">f(0) = 30</span>. ما قيمة b؟', en: 'Linear function <span class="math-display">f(x) = x + b</span> satisfies <span class="math-display">f(0) = 30</span>. What is b?' },
+                    svg: svgGraphs.linear_graph,
+                    options: [
+                        { ar: '<span class="math-display">b = 0</span>', en: '<span class="math-display">b = 0</span>' },
+                        { ar: '<span class="math-display">b = 1</span>', en: '<span class="math-display">b = 1</span>' },
+                        { ar: '<span class="math-display">b = 30</span>', en: '<span class="math-display">b = 30</span>' },
+                        { ar: '<span class="math-display">b = -30</span>', en: '<span class="math-display">b = -30</span>' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'f(0) = 0 + b = 30 → b = 30', en: 'f(0) = 0 + b = 30 → b = 30' }
+                },
+                {
+                    q: { ar: 'الدالة <span class="math-display">P(t) = 1800(1.02)ᵗ</span> تمثل عدد الثدييات البحرية بعد t سنة. ماذا يمثل 1800؟', en: 'Function <span class="math-display">P(t) = 1800(1.02)ᵗ</span> represents marine mammals after t years. What does 1800 represent?' },
+                    svg: svgGraphs.exponential_growth,
+                    options: [
+                        { ar: 'معدل النمو السنوي', en: 'Annual growth rate' },
+                        { ar: 'العدد الابتدائي عند بدء الدراسة (t=0)', en: 'Initial number at start (t=0)' },
+                        { ar: 'العدد بعد سنة واحدة', en: 'Number after one year' },
+                        { ar: 'الحد الأقصى للعدد', en: 'Maximum number' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'P(0) = 1800(1.02)⁰ = 1800 × 1 = 1800. هو العدد الابتدائي', en: 'P(0) = 1800(1.02) = 1800. It is the initial number' }
+                },
+                {
+                    q: { ar: 'مخزون 4500 كوب، يُستخدم 70 كوباً يومياً. بعد كم يوم يصبح المخزون 1700 كوب؟', en: 'Inventory of 4500 cups, 70 used daily. After how many days will inventory be 1700?' },
+                    svg: svgGraphs.inventory_graph,
+                    options: [
+                        { ar: '<span class="math-display">30</span>', en: '<span class="math-display">30</span>' },
+                        { ar: '<span class="math-display">40</span>', en: '<span class="math-display">40</span>' },
+                        { ar: '<span class="math-display">50</span>', en: '<span class="math-display">50</span>' },
+                        { ar: '<span class="math-display">60</span>', en: '<span class="math-display">60</span>' }
+                    ],
+                    correct: 1,
+                    answer: { ar: '4500 - 70d = 1700 → 70d = 2800 → d = 40', en: '4500 - 70d = 1700 → 70d = 2800 → d = 40' }
+                },
+                {
+                    q: { ar: 'أي جدول يحقق المتباينة <span class="math-display">y > 4x + 8</span>؟', en: 'Which table satisfies <span class="math-display">y > 4x + 8</span>?' },
+                    svg: svgGraphs.inequality_graph,
+                    options: [
+                        { ar: 'A: (2,19), (4,30), (6,41)', en: 'A: (2,19), (4,30), (6,41)' },
+                        { ar: 'B: (2,15), (4,25), (6,35)', en: 'B: (2,15), (4,25), (6,35)' },
+                        { ar: 'C: (2,16), (4,24), (6,32)', en: 'C: (2,16), (4,24), (6,32)' },
+                        { ar: 'D: (2,20), (4,24), (6,32)', en: 'D: (2,20), (4,24), (6,32)' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'A: عند x=2: 4(2)+8=16, y=19>16 ✓. عند x=4: 24, y=30>24 ✓. عند x=6: 32, y=41>32 ✓', en: 'A: At x=2: 4(2)+8=16, y=19>16 ✓. At x=4: 24, y=30>24 ✓. At x=6: 32, y=41>32 ✓' }
+                },
+                {
+                    q: { ar: 'أعد ترتيب <span class="math-display">P = 19C - N</span> لحل المعادلة بالنسبة لـ C:', en: 'Rearrange <span class="math-display">P = 19C - N</span> to solve for C:' },
+                    options: [
+                        { ar: '<span class="math-display">C = (P + N) / 19</span>', en: '<span class="math-display">C = (P + N) / 19</span>' },
+                        { ar: '<span class="math-display">C = (P - N) / 19</span>', en: '<span class="math-display">C = (P - N) / 19</span>' },
+                        { ar: '<span class="math-display">C = 19(P + N)</span>', en: '<span class="math-display">C = 19(P + N)</span>' },
+                        { ar: '<span class="math-display">C = P/19 - N</span>', en: '<span class="math-display">C = P/19 - N</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'P + N = 19C → C = (P + N)/19', en: 'P + N = 19C → C = (P + N)/19' }
+                },
+                {
+                    q: { ar: 'حل المعادلة التربيعية <span class="math-display">w² + 12w - 40 = 0</span>. أحد الحلول هو:', en: 'Solve <span class="math-display">w² + 12w - 40 = 0</span>. One solution is:' },
+                    options: [
+                        { ar: '<span class="math-display">-6 + 2√19</span>', en: '<span class="math-display">-6 + 2√19</span>' },
+                        { ar: '<span class="math-display">-6 - 2√19</span>', en: '<span class="math-display">-6 - 2√19</span>' },
+                        { ar: '<span class="math-display">6 + 2√19</span>', en: '<span class="math-display">6 + 2√19</span>' },
+                        { ar: '<span class="math-display">-12 + √19</span>', en: '<span class="math-display">-12 + 19</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'w = [-12 ± (144+160)]/2 = [-12 ± √304]/2 = -6 ± 2√19', en: 'w = [-12 ± √(144+160)]/2 = [-12 ± √304]/2 = -6 ± 2√19' }
+                },
+                {
+                    q: { ar: '17 مطعم. الوسيط لعدد الموظفين يقع في الفئة 20-25. أي قيمة ممكنة للوسيط؟', en: '17 restaurants. Median employees falls in 20-25 range. Which is a possible median?' },
+                    svg: svgGraphs.restaurant_table,
+                    options: [
+                        { ar: '<span class="math-display">15</span>', en: '<span class="math-display">15</span>' },
+                        { ar: '<span class="math-display">18</span>', en: '<span class="math-display">18</span>' },
+                        { ar: '<span class="math-display">19</span>', en: '<span class="math-display">19</span>' },
+                        { ar: '<span class="math-display">21</span>', en: '<span class="math-display">21</span>' }
+                    ],
+                    correct: 3,
+                    answer: { ar: 'الوسيط هو القيمة رقم 9. التراكمي حتى 19 = 8، والتراكمي حتى 25 = 15. القيمة 9 في فئة 20-25. 21 هي القيمة الوحيدة في النطاق', en: 'Median is 9th value. Cumulative to 19 = 8, to 25 = 15. 9th value in 20-25 range. 21 is the only value in range' }
+                },
+                {
+                    q: { ar: 'ما الإحداثي y للنقطة التي يقطع فيها الرسم البياني محور y؟ (عند x = 0)', en: 'What is the y-coordinate where the graph crosses the y-axis? (at x = 0)' },
+                    options: [
+                        { ar: 'نعوض x = 0 في المعادلة', en: 'Substitute x = 0 in equation' },
+                        { ar: 'نعوض y = 0 في المعادلة', en: 'Substitute y = 0 in equation' },
+                        { ar: 'نحسب الميل', en: 'Calculate the slope' },
+                        { ar: 'نوجد الجذور', en: 'Find the roots' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المقطع الصادي (y-intercept) يُوجد بتعويض x = 0', en: 'Y-intercept is found by substituting x = 0' }
+                }
+            ]
+        },
+        {
+            id: 'module2',
+            title: { ar: '📙 Module 2 - 10 أسئلة', en: '📙 Module 2 - 10 Questions' },
+            questions: [
+                {
+                    q: { ar: 'الدالة <span class="math-display">y = x² + bx + c</span>. إذا كانت الجذور عند x = -2 و x = 4، فما bc؟', en: 'Function <span class="math-display">y = x² + bx + c</span>. If roots at x = -2 and x = 4, what is bc?' },
+                    svg: svgGraphs.quadratic_graph,
+                    options: [
+                        { ar: '<span class="math-display">16</span>', en: '<span class="math-display">16</span>' },
+                        { ar: '<span class="math-display">-16</span>', en: '<span class="math-display">-16</span>' },
+                        { ar: '<span class="math-display">8</span>', en: '<span class="math-display">8</span>' },
+                        { ar: '<span class="math-display">-8</span>', en: '<span class="math-display">-8</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y = (x+2)(x-4) = x² - 2x - 8. إذن b = -2, c = -8, bc = 16', en: 'y = (x+2)(x-4) = x² - 2x - 8. So b = -2, c = -8, bc = 16' }
+                },
+                {
+                    q: { ar: 'دخل زينة في 2008 زاد 14% عن 2007، وفي 2009 زاد 4% عن 2008. دخل 2009 يساوي كم ضعف دخل 2007؟', en: 'Zayna\'s income in 2008 increased 14% over 2007, and in 2009 increased 4% over 2008. 2009 income is what multiple of 2007?' },
+                    options: [
+                        { ar: '<span class="math-display">1.18</span>', en: '<span class="math-display">1.18</span>' },
+                        { ar: '<span class="math-display">1.1856</span>', en: '<span class="math-display">1.1856</span>' },
+                        { ar: '<span class="math-display">1.14</span>', en: '<span class="math-display">1.14</span>' },
+                        { ar: '<span class="math-display">1.04</span>', en: '<span class="math-display">1.04</span>' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'y = 1.14 × 1.04 = 1.1856', en: 'y = 1.14 × 1.04 = 1.1856' }
+                },
+                {
+                    q: { ar: 'إذا كانت <span class="math-display">f(x) = 3x² - 2x + 5</span>، فما قيمة f(2)؟', en: 'If <span class="math-display">f(x) = 3x² - 2x + 5</span>, what is f(2)?' },
+                    options: [
+                        { ar: '<span class="math-display">13</span>', en: '<span class="math-display">13</span>' },
+                        { ar: '<span class="math-display">11</span>', en: '<span class="math-display">11</span>' },
+                        { ar: '<span class="math-display">15</span>', en: '<span class="math-display">15</span>' },
+                        { ar: '<span class="math-display">9</span>', en: '<span class="math-display">9</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'f(2) = 3(4) - 2(2) + 5 = 12 - 4 + 5 = 13', en: 'f(2) = 3(4) - 2(2) + 5 = 12 - 4 + 5 = 13' }
+                },
+                {
+                    q: { ar: 'مثلث قائم الزاوية، الوتر = 13، أحد الضلعين = 5. ما طول الضلع الآخر؟', en: 'Right triangle, hypotenuse = 13, one leg = 5. What is the other leg?' },
+                    options: [
+                        { ar: '<span class="math-display">12</span>', en: '<span class="math-display">12</span>' },
+                        { ar: '<span class="math-display">8</span>', en: '<span class="math-display">8</span>' },
+                        { ar: '<span class="math-display">10</span>', en: '<span class="math-display">10</span>' },
+                        { ar: '<span class="math-display">18</span>', en: '<span class="math-display">18</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'b² = 13² - 5² = 169 - 25 = 144 → b = 12', en: 'b² = 13² - 5² = 169 - 25 = 144 → b = 12' }
+                },
+                {
+                    q: { ar: 'معدل سيارة 60 ميلاً في الساعة. كم ميلاً تقطع في 45 دقيقة؟', en: 'Car rate is 60 mph. How many miles in 45 minutes?' },
+                    options: [
+                        { ar: '<span class="math-display">45</span>', en: '<span class="math-display">45</span>' },
+                        { ar: '<span class="math-display">30</span>', en: '<span class="math-display">30</span>' },
+                        { ar: '<span class="math-display">60</span>', en: '<span class="math-display">60</span>' },
+                        { ar: '<span class="math-display">40</span>', en: '<span class="math-display">40</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '45 دقيقة = 3/4 ساعة. المسافة = 60 × 3/4 = 45 ميلاً', en: '45 min = 3/4 hour. Distance = 60 × 3/4 = 45 miles' }
+                },
+                {
+                    q: { ar: 'إذا كان <span class="math-display">2x + 3y = 12</span> و <span class="math-display">x = 3</span>، فما قيمة y؟', en: 'If <span class="math-display">2x + 3y = 12</span> and <span class="math-display">x = 3</span>, what is y?' },
+                    options: [
+                        { ar: '<span class="math-display">y = 2</span>', en: '<span class="math-display">y = 2</span>' },
+                        { ar: '<span class="math-display">y = 3</span>', en: '<span class="math-display">y = 3</span>' },
+                        { ar: '<span class="math-display">y = 4</span>', en: '<span class="math-display">y = 4</span>' },
+                        { ar: '<span class="math-display">y = 6</span>', en: '<span class="math-display">y = 6</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2(3) + 3y = 12 → 6 + 3y = 12 → 3y = 6 → y = 2', en: '2(3) + 3y = 12 → 6 + 3y = 12 → 3y = 6 → y = 2' }
+                },
+                {
+                    q: { ar: 'مساحة دائرة نصف قطرها 5 سم هي:', en: 'Area of a circle with radius 5 cm is:' },
+                    options: [
+                        { ar: '<span class="math-display">25π cm²</span>', en: '<span class="math-display">25π cm²</span>' },
+                        { ar: '<span class="math-display">10π cm²</span>', en: '<span class="math-display">10π cm²</span>' },
+                        { ar: '<span class="math-display">50π cm²</span>', en: '<span class="math-display">50π cm²</span>' },
+                        { ar: '<span class="math-display">100π cm²</span>', en: '<span class="math-display">100π cm²</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'A = πr² = π(5)² = 25π', en: 'A = πr² = π(5)² = 25π' }
+                },
+                {
+                    q: { ar: 'إذا كان <span class="math-display">x + y = 10</span> و <span class="math-display">x - y = 4</span>، فما قيمة x؟', en: 'If <span class="math-display">x + y = 10</span> and <span class="math-display">x - y = 4</span>, what is x?' },
+                    options: [
+                        { ar: '<span class="math-display">x = 7</span>', en: '<span class="math-display">x = 7</span>' },
+                        { ar: '<span class="math-display">x = 6</span>', en: '<span class="math-display">x = 6</span>' },
+                        { ar: '<span class="math-display">x = 8</span>', en: '<span class="math-display">x = 8</span>' },
+                        { ar: '<span class="math-display">x = 5</span>', en: '<span class="math-display">x = 5</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بالجمع: 2x = 14 → x = 7', en: 'Adding: 2x = 14 → x = 7' }
+                },
+                {
+                    q: { ar: 'احتمال سحب كرة حمراء من كيس فيه 3 حمراء و 7 زرقاء هو:', en: 'Probability of drawing a red ball from a bag with 3 red and 7 blue is:' },
+                    options: [
+                        { ar: '<span class="math-display">3/10</span>', en: '<span class="math-display">3/10</span>' },
+                        { ar: '<span class="math-display">7/10</span>', en: '<span class="math-display">7/10</span>' },
+                        { ar: '<span class="math-display">3/7</span>', en: '<span class="math-display">3/7</span>' },
+                        { ar: '<span class="math-display">1/3</span>', en: '<span class="math-display">1/3</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'P = 3/(3+7) = 3/10', en: 'P = 3/(3+7) = 3/10' }
+                },
+                {
+                    q: { ar: 'إذا كان <span class="math-display">f(x) = x² - 4</span>، فما قيمة f(3) - f(1)؟', en: 'If <span class="math-display">f(x) = x² - 4</span>, what is f(3) - f(1)?' },
+                    options: [
+                        { ar: '<span class="math-display">8</span>', en: '<span class="math-display">8</span>' },
+                        { ar: '<span class="math-display">5</span>', en: '<span class="math-display">5</span>' },
+                        { ar: '<span class="math-display">10</span>', en: '<span class="math-display">10</span>' },
+                        { ar: '<span class="math-display">6</span>', en: '<span class="math-display">6</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'f(3) = 9-4 = 5, f(1) = 1-4 = -3. الفرق = 5-(-3) = 8', en: 'f(3) = 9-4 = 5, f(1) = 1-4 = -3. Difference = 5-(-3) = 8' }
+                }
+            ]
+        }
+    ]
+};
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+let examData;
+let correctAnswersMap = {};
+let currentLang = 'ar';
+let timeRemaining = TOTAL_TIME;
+let timerInterval;
+
+function prepareShuffledExam() {
+    rng = mulberry32(currentSeed);
+    examData = JSON.parse(JSON.stringify(originalExamData));
+    correctAnswersMap = {};
+    let globalIdx = 0;
+    examData.modules.forEach((module) => {
+        module.questions = shuffleArray(module.questions);
+        module.questions.forEach((q) => {
+            const optionsWithCorrect = q.options.map((opt, idx) => ({ option: opt, isCorrect: idx === q.correct }));
+            const shuffledOptions = shuffleArray(optionsWithCorrect);
+            q.options = shuffledOptions.map(o => o.option);
+            q.correct = shuffledOptions.findIndex(o => o.isCorrect);
+            correctAnswersMap[globalIdx] = String.fromCharCode(97 + q.correct);
+            globalIdx++;
+        });
+    });
+}
+
+function reshuffleExam() {
+    const msg = currentLang === 'ar' ? '🔄 أسئلة جديدة ومسح الإجابات. متأكد؟' : '🔄 New questions and clear answers. Sure?';
+    if (confirm(msg)) {
+        currentSeed = Date.now(); timeRemaining = TOTAL_TIME; answersVisible = false;
+        prepareShuffledExam(); renderExam(); saveState();
+        alert(currentLang === 'ar' ? '🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀' : '🎲 Questions changed! Good luck! 🍀');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.body.classList.toggle('en-mode', lang === 'en');
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        el.innerHTML = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+    });
+    renderExam(); saveState(false);
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = { ar: { option: ['A', 'B', 'C', 'D'], answer: '✅ الإجابة:' }, en: { option: ['A', 'B', 'C', 'D'], answer: '✅ Answer:' } };
+    const lbl = labels[currentLang];
+    const isRTL = currentLang === 'ar';
+    let html = '';
+    let globalIdx = 0;
+
+    examData.modules.forEach((module, modIdx) => {
+        const badgeClass = modIdx === 0 ? 'module-1' : 'module-2';
+        html += `<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-100 mb-8">
+            <div class="text-center mb-4"><span class="module-badge ${badgeClass}">${module.title[currentLang]}</span></div>
+            <ol class="space-y-4 text-sm">`;
+        module.questions.forEach((q) => {
+            const bs = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
+            html += `<li class="${bs} border-blue-400 py-2" id="q-${globalIdx}">
+                <strong class="text-blue-700">${globalIdx + 1}.</strong> ${q.q[currentLang]}<br>`;
+            if (q.svg) html += `<div class="graph-container">${q.svg}</div>`;
+            q.options.forEach((opt, oIdx) => {
+                const rs = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
+                html += `<label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'} hover:bg-blue-50 rounded-lg p-1 transition">
+                    <input type="radio" name="q${globalIdx}" value="${String.fromCharCode(97 + oIdx)}" class="${rs}">
+                    ${lbl.option[oIdx]}) ${opt[currentLang]}</label>`;
+            });
+            html += `<div class="answer-box text-green-700 mt-2 font-medium ${answersVisible ? '' : 'hidden'} bg-green-50 rounded-lg p-2">
+                ${lbl.answer} ${lbl.option[q.correct]}) ${q.options[q.correct][currentLang]} — ${q.answer[currentLang]}</div></li>`;
+            globalIdx++;
+        });
+        html += `</ol></section>`;
+    });
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeRemaining--; updateTimerDisplay();
+        if (timeRemaining % 60 === 0) saveState(false);
+        if (timeRemaining <= 600) document.getElementById('timer').classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? " انتهى الوقت!" : "⏰ Time's up!");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(timeRemaining / 60); const s = timeRemaining % 60;
+    document.getElementById('timer').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function toggleAnswers() {
+    answersVisible = !answersVisible;
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden', !answersVisible));
+    saveState(false);
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    const moduleScores = [0, 0];
+    let globalIdx = 0;
+    examData.modules.forEach((module, modIdx) => {
+        module.questions.forEach(() => {
+            const sel = document.querySelector(`input[name="q${globalIdx}"]:checked`);
+            const li = document.getElementById(`q-${globalIdx}`);
+            if (li) {
+                const isCorrect = sel && sel.value === correctAnswersMap[globalIdx];
+                if (isCorrect) {
+                    correctCount++;
+                    li.classList.add('correct');
+                    li.classList.remove('incorrect');
+                    moduleScores[modIdx]++;
+                } else {
+                    li.classList.add('incorrect');
+                    li.classList.remove('correct');
+                }
+            }
+            globalIdx++;
+        });
+    });
+    const score = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
+    document.getElementById('res-total').textContent = `${score} / 100`;
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'بطل' : 'Champion');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-GB' : 'en-GB');
+    const pc = document.getElementById('sections-performance'); pc.innerHTML = '';
+    examData.modules.forEach((m, idx) => {
+        pc.innerHTML += `<div class="flex justify-between items-center p-3 bg-white rounded-lg"><span class="text-gray-700">${m.title[currentLang]}</span><span class="font-bold text-blue-700">${moduleScores[idx]}/${m.questions.length}</span></div>`;
+    });
+    const badge = document.getElementById('success-badge');
+    document.getElementById('success-percent').textContent = `${score}%`;
+    if (currentLang === 'ar') {
+        if (score >= 90) { badge.textContent = ' ممتاز جداً! (Grade 9)'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 ممتاز! (Grade 7-8)'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 جيد (Grade 4-6)'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 حاول مرة أخرى'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (score >= 90) { badge.textContent = '🌟 Outstanding! (Grade 9)'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 Excellent! (Grade 7-8)'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = ' Good (Grade 4-6)'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 Try Again'; badge.className = 'success-badge grade-fail'; }
+    }
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    if (timerInterval) clearInterval(timerInterval);
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+    const name = document.getElementById('studentName').value || 'N/A';
+    const studentClass = document.getElementById('studentClass').value || 'N/A';
+    const date = document.getElementById('examDate').value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const badge = document.getElementById('success-badge').textContent;
+    let questionsHTML = ''; let globalIdx = 0;
+    examData.modules.forEach((module, modIdx) => {
+        questionsHTML += `<tr style="background:linear-gradient(135deg,#1e3a8a,#dc2626);color:white;"><td colspan="5" style="padding:12px;font-weight:bold;">📌 ${module.title[currentLang]}</td></tr>`;
+        module.questions.forEach((q) => {
+            const sel = document.querySelector(`input[name="q${globalIdx}"]:checked`);
+            const sv = sel ? sel.value : null; const cv = correctAnswersMap[globalIdx]; const ic = sv === cv;
+            let sat = currentLang==='ar'?'❌ لم يجب':'❌ No answer'; let sac = '#dc2626';
+            if (sv) { const si = sv.charCodeAt(0)-97; sat = q.options[si][currentLang]; sac = ic?'#059669':'#dc2626'; }
+            const cat = q.options[q.correct][currentLang];
+            const rb = ic?'#f0fdf4':'#fef2f2'; const bl = ic?'4px solid #10b981':'4px solid #ef4444';
+            questionsHTML += `<tr style="background:${rb};border-right:${bl};"><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;font-weight:bold;">${globalIdx+1}</td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#1e3a8a;">${currentLang==='ar'?'❓ السؤال:':'❓ Question:'}</strong><br><span style="font-size:13px;">${q.q[currentLang]}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:${sac};">${currentLang==='ar'?'✍️ إجابة الطالب:':'✍️ Student:'}</strong><br><span style="color:${sac};font-size:13px;">${sat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#059669;">${currentLang==='ar'?'✅ الصحيحة:':'✅ Correct:'}</strong><br><span style="color:#059669;font-size:13px;">${cat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;">${ic?'<span style="font-size:24px;">✅</span>':'<span style="font-size:24px;">❌</span>'}</td></tr>`;
+            globalIdx++;
+        });
+    });
+    const answersHTML = `<div style="font-family:'Segoe UI',Tahoma,Arial;direction:${currentLang==='ar'?'rtl':'ltr'};"><div style="background:linear-gradient(135deg,#1e3a8a,#dc2626);color:white;padding:20px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="margin:0;"> ${currentLang==='ar'?'نتيجة امتحان DSAT Math':'DSAT Math Exam Result'}</h2><p style="margin:5px 0 0;opacity:0.9;">New Practice - 22 Questions</p></div><div style="background:#eff6ff;padding:15px;"><table style="width:100%;border-collapse:collapse;"><tr><td style="padding:8px;font-weight:bold;color:#1e3a8a;">${currentLang==='ar'?'😊 الاسم:':'😊 Name:'}</td><td style="padding:8px;">${name}</td><td style="padding:8px;font-weight:bold;color:#1e3a8a;">${currentLang==='ar'?'🏫 الشعبة:':'🏫 Class:'}</td><td style="padding:8px;">${studentClass}</td></tr><tr><td style="padding:8px;font-weight:bold;color:#1e3a8a;">${currentLang==='ar'?' التاريخ:':'📅 Date:'}</td><td style="padding:8px;">${date}</td><td style="padding:8px;font-weight:bold;color:#1e3a8a;">${currentLang==='ar'?'🏆 التقدير:':' Grade:'}</td><td style="padding:8px;">${badge}</td></tr></table></div><div style="background:white;padding:20px;text-align:center;"><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#1e3a8a;">${score}</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'الدرجة':'Score'}</div></div><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#059669;">${successRate}%</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'النسبة':'Rate'}</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#1e3a8a;color:white;"><th style="padding:10px;border:1px solid #dc2626;">#</th><th style="padding:10px;border:1px solid #dc2626;">${currentLang==='ar'?'السؤال':'Question'}</th><th style="padding:10px;border:1px solid #dc2626;">${currentLang==='ar'?'إجابة الطالب':'Student'}</th><th style="padding:10px;border:1px solid #dc2626;">${currentLang==='ar'?'الصحيحة':'Correct'}</th><th style="padding:10px;border:1px solid #dc2626;">${currentLang==='ar'?'النتيجة':'Result'}</th></tr></thead><tbody>${questionsHTML}</tbody></table><div style="background:linear-gradient(135deg,#eff6ff,#fee2e2);padding:15px;border-radius:0 0 10px 10px;"><p style="margin:0;color:#1e3a8a;text-align:center;">🎯 <strong>${currentLang==='ar'?'أحسنت يا بطل! استمر في التميز!':'Great job! Keep excelling!'}</strong> 🎯</p><p style="margin:5px 0 0;color:#1e3a8a;text-align:center;font-size:12px;">${currentLang==='ar'?'تم الإرسال تلقائياً | Mr. Mohammed Hesham':'Auto-sent | Mr. Mohammed Hesham'}</p></div></div>`;
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, { to_email: TARGET_EMAIL, student_name: name, student_class: studentClass, exam_date: date, total_score: score, success_rate: successRate, grade: badge, answers_table: answersHTML }).then(() => {
+        status.textContent = currentLang==='ar'?'✅ تم الإرسال بنجاح!':'✅ Sent successfully!'; status.style.color = '#059669'; btn.textContent = currentLang==='ar'?'✓ تم':'✓ Sent';
+    }).catch(err => {
+        status.textContent = currentLang==='ar'?'❌ حدث خطأ':'❌ Error'; status.style.color = '#dc2626'; btn.disabled = false; btn.textContent = currentLang==='ar'?'📧 حاول مرة أخرى':' Try Again'; console.error(err);
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = loadState();
+    if (saved && saved.seed) {
+        currentSeed = saved.seed; currentLang = saved.lang || 'ar';
+        timeRemaining = saved.timeRemaining !== undefined ? saved.timeRemaining : TOTAL_TIME;
+        answersVisible = saved.answersVisible || false;
+        document.documentElement.lang = currentLang;
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.getElementById('btn-ar').classList.toggle('active', currentLang === 'ar');
+        document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+        document.body.classList.toggle('en-mode', currentLang === 'en');
+        document.querySelectorAll('[data-ar][data-en]').forEach(el => { el.innerHTML = currentLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en'); });
+    } else { currentSeed = Date.now(); }
+    prepareShuffledExam(); renderExam();
+    if (saved) {
+        if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
+        if (saved.studentClass) document.getElementById('studentClass').value = saved.studentClass;
+        if (saved.examDate) document.getElementById('examDate').value = saved.examDate;
+        if (saved.answers) restoreAnswers(saved.answers);
+    }
+    setupAnswerListeners(); setupInputListeners(); startTimer();
+});
+window.addEventListener('beforeunload', () => saveState(false));
+</script>
+</body>
+</html>
